@@ -29,3 +29,5 @@ class GroupViewSet(viewsets.ModelViewSet):
 def index(request):
     return HttpResponse("hola mundo :)")
 
+def papaperuana(request):
+    return HttpResponse("hola mundo peruano :)")
