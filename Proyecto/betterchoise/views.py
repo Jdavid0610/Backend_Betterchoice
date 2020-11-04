@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.http import JsonResponse
 
 #API Rest imports
 from django.contrib.auth.models import User, Group
@@ -27,7 +28,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 #paginitas personales
 
 def index(request):
-    return HttpResponse("hola mundo :)")
+    return JsonResponse({'mensaje':'soy el backed en django'})
 
-def papaperuana(request):
-    return HttpResponse("hola mundo peruano :)")
+def salu2(request):
+    return JsonResponse({'mensaje':'soy el backend otra vez x2 :)'})
