@@ -55,27 +55,60 @@ class searchClass(viewsets.ModelViewSet):
         AmazonURLPriceFilter="https://www.amazon.com/s?k="+str(search)+"&rh=p_36%3A"+str(Price_filter_min)+"-"+str()+"&qid=1605228093&rnid=2421885011&ref=sr_nr_p_36_6"
 
         #headers
-        headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 OPR/71.0.3770.323'}
+        headers={'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36 RuxitSynthetic/1.0 v7475098610 t38550 ath9b965f92 altpub cvcv=2'}
         
         #amaz Scraping
         Amaz = requests.get(AmazonURLPriceFilter,headers=headers)
         Amazon=BeautifulSoup(Amaz.text,'html.parser')
         imgAmz=Amazon('img')
-        for a in imgAmz:
-            print(a.get('src'))
+        #for a in imgAmz:
+            #print(a.get('src'))
         
-        #alkos scraping
+        #alkos scraping---------------------------------------------------------------------------------------
         alk=requests.get(AlkostoURL,headers=headers)
         Alkosto=BeautifulSoup(alk.text,'html.parser')
         imgAlk=Alkosto.select('.product-image')
-        imgs=imgAlk('img')
-        for a in imgs:
-            print(a.get('src'))
+        nameAlk=Alkosto.select('.product-name')
+        priceAlk=Alkosto.select('.price')
+        #img list alkosto
+        listImgAlk=[]
+        for a in imgAlk:
+            i=a('img')
+            for a in i:
+                listImgAlk.append(a.get('src'))
+        #name list alkosto
+        listNameAlk=[]
+        for a in nameAlk:
+            i=a('a')
+            for a in i:
+                listNameAlk.append(str(a.get('title')).replace('+',''))
+        #price list alkosto
+        listPriceAlk=[]
+        listPriceAlkAux=[ prices.string for prices in priceAlk]
+        for a in listPriceAlkAux:
+            a2=str(a).strip()
+            if(a2!='None'):
+                a3=a2.strip('$\xa0')
+                a4=a3.strip('\n')
+                a5=a4.strip('\r')
+                listPriceAlk.append(int(a5.replace('.','')))
+        print(listNameAlk)
+        print(len(listNameAlk))
+        listIntPricesAlk=[]
+        auxprice=0
+        for a in listPriceAlk:
+            if(a > auxprice):
+                auxprice=a
+                listIntPricesAlk.append(a)
+            else:
+                auxprice=a
 
+        print(listIntPricesAlk)
+        print(len(listIntPricesAlk))
         url={
             'brand':data["brand"],
             'model':data["model"],
-            'price_max':data["price_max"],
+            'price':data["price_max"],
             'URL':AlkostoURL
         }
         return JsonResponse(url)
