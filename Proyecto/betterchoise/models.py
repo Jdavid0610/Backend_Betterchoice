@@ -10,4 +10,4 @@ class Search(models.Model):
     use = models.TextField(max_length=100, blank=True, default='')
     category = models.TextField(max_length=100, blank=True, default='')
     img = models.TextField(max_length=100, blank=True, default='')
-    
+    user= models.TextField(max_length=100, blank=True, default='')
