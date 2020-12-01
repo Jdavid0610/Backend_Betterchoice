@@ -42,8 +42,8 @@ class searchClass(viewsets.ModelViewSet):
     def Amazon_search(request):
         #amazon search
         data=JSONParser().parse(request)
-        search=data["model"]
-        Price_filter_min=0
+        search=data["brand"]+'+'+data["model"].replace(' ','+')
+        Price_filter_min=data["price_min"]
         Price_filter_max=data["price_max"]
         use_bussines=False
         use_gamer=False
@@ -76,11 +76,13 @@ class searchClass(viewsets.ModelViewSet):
             i=a('img')
             for a in i:
                 listImgAlk.append(a.get('src'))
-        #name list alkosto
+        #name and url list alkosto
+        listUrlAlk=[]
         listNameAlk=[]
         for a in nameAlk:
             i=a('a')
             for a in i:
+                listUrlAlk.append(a.get('href'))
                 listNameAlk.append(str(a.get('title')).replace('+',''))
         #price list alkosto
         listPriceAlk=[]
@@ -94,10 +96,13 @@ class searchClass(viewsets.ModelViewSet):
                 listPriceAlk.append(int(a5.replace('.','')))
         print(listNameAlk)
         print(len(listNameAlk))
+        print(listUrlAlk)
+        print(len(listUrlAlk))
+        print(listPriceAlk)
         listIntPricesAlk=[]
         auxprice=0
         for a in listPriceAlk:
-            if(a > auxprice):
+            if(a >= auxprice):
                 auxprice=a
                 listIntPricesAlk.append(a)
             else:
@@ -105,13 +110,17 @@ class searchClass(viewsets.ModelViewSet):
 
         print(listIntPricesAlk)
         print(len(listIntPricesAlk))
-        url={
-            'brand':data["brand"],
-            'model':data["model"],
-            'price':data["price_max"],
-            'URL':AlkostoURL
-        }
-        return JsonResponse(url)
+        
+        urls={'items':[]}
+        for indice in range(0,len(listIntPricesAlk)):
+            urls['items'].append({
+                'brand':listNameAlk[indice],
+                'URL':listUrlAlk[indice],
+                'page':'Alkosto',
+                'img':listImgAlk[indice],
+                'price':listIntPricesAlk[indice]
+            })
+        return JsonResponse(urls)
 
 
 
